@@ -6,7 +6,7 @@ media/
 /venv/
 .venv/
 .pytest_cache/
-.coverage
+.coverage/
 htmlcov/
 dist/
 *.egg-info/
