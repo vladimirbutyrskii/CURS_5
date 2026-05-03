@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from .validators import validate_duration, validate_periodicity, validate_habit
 
 
 class Habit(models.Model):
@@ -36,6 +38,7 @@ class Habit(models.Model):
     )
     periodicity = models.PositiveIntegerField(
         default=1,
+        validators=[validate_periodicity],  # Правило 5
         verbose_name='Периодичность (в днях)'
     )
     reward = models.CharField(
@@ -46,6 +49,7 @@ class Habit(models.Model):
     )
     duration = models.PositiveIntegerField(
         default=120,
+        validators=[validate_duration],  # Правило 2
         verbose_name='Время на выполнение (в секундах)'
     )
     is_public = models.BooleanField(
@@ -68,4 +72,14 @@ class Habit(models.Model):
 
     def __str__(self):
         return f'{self.user}: {self.action} в {self.place} в {self.time}'
+
+    def clean(self):
+        """Вызов всех валидаторов модели."""
+        super().clean()
+        validate_habit(self)  # Правила 1, 3, 4
+
+    def save(self, *args, **kwargs):
+        """Гарантированный вызов clean() перед сохранением."""
+        self.full_clean()
+        super().save(*args, **kwargs)
 
