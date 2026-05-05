@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 from .models import Habit
 from .serializers import HabitSerializer, HabitCreateSerializer, HabitUpdateSerializer
@@ -24,4 +24,15 @@ class HabitViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Подстановка текущего пользователя при создании."""
         serializer.save(user=self.request.user)
-        
+
+
+class PublicHabitListView(generics.ListAPIView):
+    """Список публичных привычек (только чтение)."""
+
+    serializer_class = HabitSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Только публичные привычки, исключая привычки текущего пользователя."""
+        return Habit.objects.filter(is_public=True).exclude(user=self.request.user)
+
