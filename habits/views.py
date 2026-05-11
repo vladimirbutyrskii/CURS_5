@@ -79,7 +79,7 @@ class TelegramLinkView(generics.CreateAPIView):
     serializer_class = TelegramUserSerializer
     permission_classes = [IsAuthenticated]
 
-    d @ swagger_auto_schema(
+    @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             required=['chat_id'],
@@ -92,7 +92,6 @@ class TelegramLinkView(generics.CreateAPIView):
             200: TelegramUserSerializer,
         }
     )
-
     def create(self, request, *args, **kwargs):
         chat_id = request.data.get('chat_id')
         if not chat_id:
@@ -110,4 +109,3 @@ class TelegramLinkView(generics.CreateAPIView):
             TelegramUserSerializer(telegram_user).data,
             status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
         )
-
