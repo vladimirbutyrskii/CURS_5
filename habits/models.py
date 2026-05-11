@@ -83,3 +83,33 @@ class Habit(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
+
+class TelegramUser(models.Model):
+    """Связь пользователя с Telegram-аккаунтом."""
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='telegram_user',
+        verbose_name='Пользователь'
+    )
+    chat_id = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name='Chat ID Telegram'
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='Активен'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата привязки'
+    )
+
+    class Meta:
+        verbose_name = 'Telegram-пользователь'
+        verbose_name_plural = 'Telegram-пользователи'
+
+    def __str__(self):
+        return f'{self.user.email} — {self.chat_id}'

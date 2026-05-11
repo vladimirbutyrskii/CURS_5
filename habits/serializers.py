@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Habit
+from .models import Habit, TelegramUser
 
 
 class HabitSerializer(serializers.ModelSerializer):
@@ -85,4 +85,11 @@ class HabitUpdateSerializer(serializers.ModelSerializer):
                 )
         return data
 
-    
+
+class TelegramUserSerializer(serializers.ModelSerializer):
+    """Сериализатор для привязки Telegram."""
+
+    class Meta:
+        model = TelegramUser
+        fields = ('id', 'user', 'chat_id', 'is_active')
+        read_only_fields = ('user', 'is_active')
